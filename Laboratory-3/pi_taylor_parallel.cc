@@ -4,6 +4,7 @@
 #include <vector>
 #include <thread>
 #include <mutex>
+#include <chrono>
 
 using my_float = long double;
 
@@ -55,15 +56,23 @@ std::pair<size_t, size_t> usage(int argc, const char *argv[]) {
 }
 
 int main(int argc, const char *argv[]) {
+	
+    auto start = std::chrono::high_resolution_clock::now();
+
     auto ret_pair = usage(argc, argv);
     auto steps = ret_pair.first;
     auto threads = ret_pair.second;
 
     auto pi = pi_taylor(steps, threads);
 
+    auto end = std::chrono::high_resolution_clock::now();
+
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+
     std::cout << "For " << steps << " steps and " << threads << " threads, pi value: "
               << std::setprecision(std::numeric_limits<my_float>::digits10 + 1)
               << pi << std::endl;
+    std::cout << "Time :" << duration.count() <<std::endl;
 
     return 0;
 }
